@@ -1,12 +1,15 @@
-{% extends 'core/base.html'%}
+{% extends 'core/base.html' %}
 
 {% block content %}
     <h1>Tutti gli eventi</h1>
 
+    <!-- Crea nuovo evento -->
+    {#    <a href="{% url 'eventi_create' %}"><button class="btn btn-primary">Nuovo evento</button></a>#}
+
     <ul>
-        {% for event in eventi %}
+        {% for evento in eventi %}
             <li>
-            event.title
+                {{ evento.titolo }} - {{ evento.data }}
             </li>
         {% endfor %}
     </ul>

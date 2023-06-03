@@ -1,5 +1,21 @@
-{% extends 'core/base.html'%}
+{% extends 'core/base.html' %}
 
 {% block content %}
-    <h1> Home </h1>
-   {% endblock %}
+    <div>
+        <div class="px-2">
+            <h1> Home </h1>
+            <p> In questa pagina potrai vedere gli eventi più importanti dei prossimi giorni! Iscriviti al sito per poter creare il tuo evento.</p>
+            <p> Se sei già registrato, fai il log in per creare un nuovo evento oppure per comprare un biglietto per il tuo evento preferito!</p>
+        </div>
+
+        <ul>
+            {% for evento in eventi %}
+                <li>
+                    {{ evento.titolo }} - {{ evento.data }}
+                </li>
+            {% endfor %}
+        </ul>
+
+
+    </div>
+{% endblock %}

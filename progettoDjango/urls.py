@@ -16,13 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from EventManager import views
 
-from EventManager.views import ListaEventiView, index, signup
+from EventManager.views import ListaEventiView, signup, index, CreaEventoView
 
 urlpatterns = [
-    path('', index, name='index'),
+    path('', views.lista_eventi, name='index'),
     path('admin/', admin.site.urls),
     path('eventi/', ListaEventiView.as_view(), name='eventi'),
+
+    path('eventi/', views.lista_eventi, name='eventi'), # questo url chiama la funzione lista_eventi in views.py per far vedere la lista degli eventi
+
+    path('event/<int:id>/', ListaEventiView.as_view(), name='event'),
+    path('eventi/nuovo', CreaEventoView.as_view(), name='eventi_create'),
     path('signup/', signup, name='signup'),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('crea_evento/', views.crea_evento, name='crea_evento'),
+
+    # path('event/<int:pk>/', views.event_detail, name='event'),
 ]
