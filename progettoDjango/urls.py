@@ -20,14 +20,14 @@ from EventManager import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-from EventManager.views import ListaEventiView, signup, index, CreaEventoView, iscrizione_evento
+from EventManager.views import ListaEventiView, signup, CreaEventoView, iscrizione_evento
 
 urlpatterns = [
-    path('', views.lista_eventi, name='index'),
+    path('', views.home_view_eventi, name='index'),
     path('admin/', admin.site.urls),
     path('eventi/', ListaEventiView.as_view(), name='eventi'),
 
-    path('eventi/', views.lista_eventi, name='eventi'), # questo url chiama la funzione lista_eventi in views.py per far vedere la lista degli eventi
+    # path('eventi/', views.home_view_eventi, name='eventi'), # questo url chiama la funzione lista_eventi in views.py per far vedere la lista degli eventi
 
     path('event/<int:id>/', ListaEventiView.as_view(), name='event'),
     path('eventi/nuovo', CreaEventoView.as_view(), name='eventi_create'),
@@ -35,7 +35,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('crea_evento/', views.crea_evento, name='crea_evento'),
 
-    path('', index, name='index'), # questo url mi serve quando clicco il bottone "homepage" nella navbar, mi reindirizza alla pagina index.html
-
     path('eventi/<str:titolo_evento>/iscriviti/', iscrizione_evento, name='iscrizione_evento'),
+
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

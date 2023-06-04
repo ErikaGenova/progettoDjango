@@ -6,6 +6,10 @@
         {% csrf_token %}
         {{ form.as_p }}
         {{ form.image }} <!-- per caricare file -->
+
+        <label for="tags">Tags (separati da virgole):</label>
+        <input type="text" name="tags" id="tags">
+
         <input type="submit" value="Crea">
     </form>
 {% endblock %}

@@ -7,7 +7,9 @@ class Evento(models.Model):
     luogo = models.CharField(max_length=100)
     descrizione = models.TextField()
     costo_biglietto = models.FloatField()
-    tag = models.ManyToManyField('Tag')
+
+    tag = models.ManyToManyField('Tag', related_name='eventi')
+
     num_partecipanti = models.IntegerField()
     posti_disponibili = models.IntegerField()
     orario = models.TimeField()  # orario di inizio

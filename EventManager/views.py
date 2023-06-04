@@ -3,17 +3,13 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, CreateView
-from EventManager.models import Evento
+from EventManager.models import Evento, Tag
 from .forms import SignupForm, IscrizioneForm
 from .forms import EventoForm
 
 
 # Create your views here.
 
-def index(request):
-    # if request.method == 'GET':
-
-    return render(request, 'core/index.html')
 
 
 class ListaEventiView(ListView):
@@ -21,7 +17,12 @@ class ListaEventiView(ListView):
     template_name = 'core/eventi.html'
 
     def get(self, request, *args, **kwargs):
-        eventi = Evento.objects.all()
+
+        if request.GET.get('tag'):  # filtra per tag
+            tag_cercato = request.GET.get('tag')
+            eventi = Evento.objects.filter(tag__nome__exact=tag_cercato)
+        else:
+            eventi = Evento.objects.all()
         return render(request, self.template_name, {'eventi': eventi})
 
 
@@ -44,10 +45,9 @@ class CreaEventoView(CreateView):
     fields = '__all__'
 
 
-def lista_eventi(request):
+def home_view_eventi(request):
     eventi = Evento.objects.all()  # prende tutti gli eventi dal db
     context = {'eventi': eventi}  # crea un dizionario con gli eventi, viene utilizzato per passare i dati dal backend al frontend
-    print(context)
     return render(request, 'core/index.html', context)  # renderizza la pagina html con i dati del dizionario
 
 
@@ -59,10 +59,29 @@ def crea_evento(request):
     if request.method == 'POST':
         form = EventoForm(request.POST, request.FILES)
         if form.is_valid():
-            evento = form.save()
+            evento = form.save(commit=False)
+
+            # Ottieni i tag dal form
+            # request.POST.get('tags') restituisce il valore inserito nell'input con nome "tags"; quindi la stringa viene divisa in una lista di tag utilizzando split(','), mentre strip()viene utilizzata per rimuovere eventuali spazi bianchi extra intorno ai tag
+            tags_input = request.POST.get('tags')
+            tag_list = [tag.strip() for tag in tags_input.split(',')]
+
+            # Salva l'evento nel database
+            evento.save()
+
+            # Associa i tag all'evento
+            # Viene iterata la lista dei tag. Per ogni tag, viene utilizzato Tag.objects.get_or_create(nome=tag_name) per ottenere il tag
+            # dal database o crearne uno nuovo se non esiste già. Viene restituito un oggetto Tag e una variabile temporanea _ che rappresenta
+            # un valore booleano che indica se il tag è stato creato o già esisteva. Infine, il tag viene associato all'evento utilizzando
+            # evento.tag.add(tag).
+            for tag_name in tag_list:
+                tag, _ = Tag.objects.get_or_create(nome=tag_name)
+                evento.tag.add(tag)
+
             return HttpResponseRedirect(reverse('index'))
     else:
         form = EventoForm()
+
     return render(request, 'core/crea_evento.html', {'form': form})
 
 
@@ -78,3 +97,4 @@ def iscrizione_evento(request, titolo_evento):
     else:
         form = IscrizioneForm()
     return render(request, 'core/iscrizione_evento.html', {'form': form})
+

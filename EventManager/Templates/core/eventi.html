@@ -1,16 +1,33 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-    <h1>Tutti gli eventi</h1>
+    <h1 class="text-center my-3">Tutti gli eventi</h1>
 
-    <!-- Crea nuovo evento -->
-    {#    <a href="{% url 'eventi_create' %}"><button class="btn btn-primary">Nuovo evento</button></a>#}
-
-    <ul>
+    <div class="row my-3 mx-3">
         {% for evento in eventi %}
-            <li>
-                {{ evento.titolo }} - {{ evento.data }}
-            </li>
+            <div class="col-md-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="{{ MEDIA_URL }}{{ evento.image.url }}" class="card-img-top" alt="Evento Image">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ evento.titolo }}</h5>
+                        <p class="card-text">{{ evento.descrizione }} <br>
+                            Costo biglietto: {{ evento.costo_biglietto }} <br>
+                            Quando: {{ evento.data }}, ore {{ evento.orario }} <br>
+                            Dove: {{ evento.luogo }}</p>
+                        Affrettati, sono disponibili solo {{ evento.posti_disponibili }} biglietti! <br>
+                        <a href="{% url 'iscrizione_evento' evento.titolo %}" class="btn btn-primary my-2">Iscriviti all'evento!</a>
+                        <br>
+                        {% if evento.tag.all %}
+                            <span>Tags:</span>
+                            {% for tag in evento.tag.all %}
+                                <span>{{ tag }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <p>No tags for the given event</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
 {% endblock %}
