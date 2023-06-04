@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
 {% block content %}
     <div>
@@ -10,12 +11,22 @@
 
         <ul>
             {% for evento in eventi %}
-                <li>
-                    {{ evento.titolo }} - {{ evento.data }}
+                <li class="list-unstyled">
+                    <div class="card" style="width: 18rem;">
+                        <img src="{{ MEDIA_URL }}{{ evento.image.url }}" class="card-img-top" alt="Evento Image">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ evento.titolo }}</h5>
+                            <p class="card-text">{{ evento.descrizione }} <br>
+                            Costo biglietto: {{ evento.costo_biglietto }} <br>
+                            Quando: {{ evento.data }}, ore {{ evento.orario }} <br>
+                            Dove: {{ evento.luogo }}</p>
+                            Affrettati, sono disponibili solo {{ evento.posti_disponibili }} biglietti! <br>
+                            <a href="{% url 'iscrizione_evento' evento.titolo %}" class="btn btn-primary my-2">Iscriviti all'evento!</a>
+                        </div>
+                    </div>
+
                 </li>
             {% endfor %}
         </ul>
-
-
     </div>
 {% endblock %}

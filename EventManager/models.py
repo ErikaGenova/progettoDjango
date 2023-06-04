@@ -11,6 +11,7 @@ class Evento(models.Model):
     num_partecipanti = models.IntegerField()
     posti_disponibili = models.IntegerField()
     orario = models.TimeField()  # orario di inizio
+    image = models.ImageField(upload_to='media/images/', blank=True, null=True)
 
     def __str__(self):
         return self.titolo
@@ -50,3 +51,12 @@ class Biglietto(models.Model):
 
     class Meta:
         verbose_name_plural = "Biglietti"
+
+class Iscrizione(models.Model):
+    nome = models.CharField(max_length=100)
+    cognome = models.CharField(max_length=100)
+    email = models.EmailField()
+    evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.nome} {self.cognome}'

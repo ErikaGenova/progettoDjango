@@ -2,9 +2,10 @@
 
 {% block content %}
     <h1>Crea evento</h1>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data"> <!-- enctype="multipart/form-data" serve per caricare file -->
         {% csrf_token %}
         {{ form.as_p }}
+        {{ form.image }} <!-- per caricare file -->
         <input type="submit" value="Crea">
     </form>
 {% endblock %}

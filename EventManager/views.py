@@ -1,10 +1,10 @@
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, CreateView
 from EventManager.models import Evento
-from .forms import SignupForm
+from .forms import SignupForm, IscrizioneForm
 from .forms import EventoForm
 
 
@@ -57,12 +57,24 @@ def lista_eventi(request):
 # la vista controlla se la richiesta è di tipo POST, se lo è, controlla se il form è valido, se lo è, salva i dati nel db e reindirizza l'utente alla pagina index.html
 def crea_evento(request):
     if request.method == 'POST':
-        form = EventoForm(request.POST)
+        form = EventoForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            evento = form.save()
             return HttpResponseRedirect(reverse('index'))
     else:
         form = EventoForm()
     return render(request, 'core/crea_evento.html', {'form': form})
 
 
+def iscrizione_evento(request, titolo_evento):
+    evento = get_object_or_404(Evento, titolo=titolo_evento)
+    if request.method == 'POST':
+        form = EventoForm(request.POST)
+        if form.is_valid():
+            iscrizione = form.save(commit=False)
+            iscrizione.evento = evento
+            iscrizione.save()
+            return redirect('evento_iscritto')
+    else:
+        form = IscrizioneForm()
+    return render(request, 'core/iscrizione_evento.html', {'form': form})

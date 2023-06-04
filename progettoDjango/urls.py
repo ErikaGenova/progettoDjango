@@ -17,8 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from EventManager import views
+from django.conf import settings
+from django.conf.urls.static import static
 
-from EventManager.views import ListaEventiView, signup, index, CreaEventoView
+from EventManager.views import ListaEventiView, signup, index, CreaEventoView, iscrizione_evento
 
 urlpatterns = [
     path('', views.lista_eventi, name='index'),
@@ -33,5 +35,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('crea_evento/', views.crea_evento, name='crea_evento'),
 
-    # path('event/<int:pk>/', views.event_detail, name='event'),
-]
+    path('', index, name='index'), # questo url mi serve quando clicco il bottone "homepage" nella navbar, mi reindirizza alla pagina index.html
+
+    path('eventi/<str:titolo_evento>/iscriviti/', iscrizione_evento, name='iscrizione_evento'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
