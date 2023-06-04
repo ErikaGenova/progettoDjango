@@ -15,7 +15,17 @@
                             Quando: {{ evento.data }}, ore {{ evento.orario }} <br>
                             Dove: {{ evento.luogo }}</p>
                         Affrettati, sono disponibili solo {{ evento.posti_disponibili }} biglietti! <br>
-                        <a href="{% url 'iscrizione_evento' evento.titolo %}" class="btn btn-primary my-2">Iscriviti all'evento!</a>
+
+                        {#                        <a href="{% url 'iscrizione_evento' evento.titolo %}" class="btn btn-primary my-2">Iscriviti all'evento!</a>#}
+
+                        {% if evento.costo_biglietto == 0 %}
+                            <a href="{% url 'registrazione' evento.titolo %}" class="btn btn-primary my-2">Iscriviti all'evento!</a>
+                        {% else %}
+                            <a href="{% url 'acquista_biglietto' evento.titolo %}" class="btn btn-primary my-2">Acquista il biglietto!</a>
+                        {% endif %}
+
+
+
                         <br>
                         {% if evento.tag.all %}
                             <span>Tags:</span>

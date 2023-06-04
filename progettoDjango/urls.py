@@ -20,7 +20,8 @@ from EventManager import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-from EventManager.views import ListaEventiView, signup, CreaEventoView, iscrizione_evento
+from EventManager.views import ListaEventiView, signup, CreaEventoView
+    #iscrizione_evento
 
 urlpatterns = [
     path('', views.home_view_eventi, name='index'),
@@ -35,7 +36,11 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('crea_evento/', views.crea_evento, name='crea_evento'),
 
-    path('eventi/<str:titolo_evento>/iscriviti/', iscrizione_evento, name='iscrizione_evento'),
+    # path('eventi/<str:titolo_evento>/iscriviti/', iscrizione_evento, name='iscrizione_evento'),
 
+    path('eventi/<str:evento_titolo>/acquista/', views.acquista_biglietto, name='acquista_biglietto'), # questo url mi serve per acquistare il biglietto
+    path('evento/<str:evento_titolo>/registrazione/', views.registrazione, name='registrazione'), # questo url mi serve per registrare un utente ad un evento
+
+    path('profilo/', views.profilo, name='profilo'), # questo url mi serve per vedere il profilo dell'utente
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

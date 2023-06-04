@@ -6,10 +6,10 @@ from django.views.generic import ListView, CreateView
 from EventManager.models import Evento, Tag
 from .forms import SignupForm, IscrizioneForm
 from .forms import EventoForm
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
-
 
 
 class ListaEventiView(ListView):
@@ -85,16 +85,65 @@ def crea_evento(request):
     return render(request, 'core/crea_evento.html', {'form': form})
 
 
-def iscrizione_evento(request, titolo_evento):
-    evento = get_object_or_404(Evento, titolo=titolo_evento)
-    if request.method == 'POST':
-        form = EventoForm(request.POST)
-        if form.is_valid():
-            iscrizione = form.save(commit=False)
-            iscrizione.evento = evento
-            iscrizione.save()
-            return redirect('evento_iscritto')
-    else:
-        form = IscrizioneForm()
-    return render(request, 'core/iscrizione_evento.html', {'form': form})
+# def iscrizione_evento(request, titolo_evento):
+#     evento = get_object_or_404(Evento, titolo=titolo_evento)
+#     if request.method == 'POST':
+#         form = EventoForm(request.POST)
+#         if form.is_valid():
+#             iscrizione = form.save(commit=False)
+#             iscrizione.evento = evento
+#             iscrizione.save()
+#             return redirect('evento_iscritto')
+#     else:
+#         form = IscrizioneForm()
+#     return render(request, 'core/iscrizione_evento.html', {'form': form})
 
+
+def acquista_biglietto(request, evento_titolo):
+    evento = get_object_or_404(Evento, pk=evento_titolo)
+
+    if evento.posti_disponibili > 0:
+        # Rimuovi un posto disponibile
+        evento.posti_disponibili -= 1
+        evento.save()
+
+        # Altri codici di gestione dell'acquisto del biglietto
+
+        return render(request, 'acquisto_completato.html')
+    else:
+        return render(request, 'acquisto_fallito.html')
+
+
+def dettaglio_evento(request, evento_titolo):
+    evento = get_object_or_404(Evento, nome=evento_titolo)
+    context = {
+        'evento': evento
+    }
+    return render(request, 'dettaglio_evento.html', context)
+
+
+@login_required
+def registrazione(request, evento_titolo):
+    evento = get_object_or_404(Evento, titolo=evento_titolo)
+    context = {'evento': evento}
+
+    if evento.posti_disponibili > 0:
+        # Rimuovi un posto disponibile
+        evento.posti_disponibili -= 1
+        evento.save()
+        evento.iscritti.add(request.user)
+    else:
+        return render(request, 'core/registrazione_fallita.html', context)
+
+    return render(request, 'core/registrazione_completata.html', context)
+
+@login_required
+def profilo(request):
+    utente = request.user #stiamo ottenendo l'utente corrente
+    eventi_iscritti = utente.eventi_iscritti.all() #stiamo ottenendo tutti gli eventi a cui l'utente è iscritto
+
+    context = {
+        'utente': utente,
+        'eventi_iscritti': eventi_iscritti
+    }
+    return render(request, 'core/profilo.html', context)

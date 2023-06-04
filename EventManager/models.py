@@ -15,6 +15,8 @@ class Evento(models.Model):
     orario = models.TimeField()  # orario di inizio
     image = models.ImageField(upload_to='media/images/', blank=True, null=True)
 
+    iscritti = models.ManyToManyField(User, through='Iscrizione', related_name='eventi_iscritti') #ogni istanza del modello Evento ha un campo 'iscritti' che rappresenta gli utenti iscritti a quell'evento
+
     def __str__(self):
         return self.titolo
 
@@ -59,6 +61,10 @@ class Iscrizione(models.Model):
     cognome = models.CharField(max_length=100)
     email = models.EmailField()
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
+
+    class Meta:
+        unique_together = (("user", "evento"),)
 
     def __str__(self):
         return f'{self.nome} {self.cognome}'

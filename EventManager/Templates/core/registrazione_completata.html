@@ -1,0 +1,8 @@
+<!-- iscrizione_evento.html -->
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <h1>Evento: {{ evento.titolo }}</h1>
+    <p>Iscrizione avvenuta con successo! </p>
+    <a href="{% url 'index' %}" class="btn btn-primary my-2">Torna in Homepage</a>
+{% endblock %}

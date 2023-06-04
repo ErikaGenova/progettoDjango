@@ -4,29 +4,36 @@
 {% block content %}
     <div>
         <div class="px-2">
-            <h1> Home </h1>
-            <p> In questa pagina potrai vedere gli eventi più importanti dei prossimi giorni! Iscriviti al sito per poter creare il tuo evento.</p>
-            <p> Se sei già registrato, fai il log in per creare un nuovo evento oppure per comprare un biglietto per il tuo evento preferito!</p>
+            <h1>Home</h1>
+            <p>In questa pagina potrai vedere gli eventi più importanti dei prossimi giorni! Iscriviti al sito per poter creare il tuo evento.</p>
+            <p>Se sei già registrato, fai il log in per creare un nuovo evento oppure per comprare un biglietto per il tuo evento preferito!</p>
         </div>
 
-        <ul>
+        <div class="row">
             {% for evento in eventi %}
-                <li class="list-unstyled">
+                <div class="col-md-3">
                     <div class="card" style="width: 18rem;">
                         <img src="{{ MEDIA_URL }}{{ evento.image.url }}" class="card-img-top" alt="Evento Image">
                         <div class="card-body">
                             <h5 class="card-title">{{ evento.titolo }}</h5>
                             <p class="card-text">{{ evento.descrizione }} <br>
-                            Costo biglietto: {{ evento.costo_biglietto }} <br>
-                            Quando: {{ evento.data }}, ore {{ evento.orario }} <br>
-                            Dove: {{ evento.luogo }}</p>
+                                Costo biglietto: {{ evento.costo_biglietto }} <br>
+                                Quando: {{ evento.data }}, ore {{ evento.orario }} <br>
+                                Dove: {{ evento.luogo }}</p>
                             Affrettati, sono disponibili solo {{ evento.posti_disponibili }} biglietti! <br>
-                            <a href="{% url 'iscrizione_evento' evento.titolo %}" class="btn btn-primary my-2">Iscriviti all'evento!</a>
+
+                            {#                            <a href="{% url 'iscrizione_evento' evento.titolo %}" class="btn btn-primary my-2">Iscriviti all'evento!</a>#}
+
+                            {% if evento.costo_biglietto == 0 %}
+                                <a href="{% url 'registrazione' evento.titolo %}" class="btn btn-primary my-2">Iscriviti all'evento!</a>
+                            {% else %}
+                                <a href="{% url 'acquista_biglietto' evento.titolo %}" class="btn btn-primary my-2">Acquista il biglietto!</a>
+                            {% endif %}
+
                         </div>
                     </div>
-
-                </li>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
     </div>
 {% endblock %}
