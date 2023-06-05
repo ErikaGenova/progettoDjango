@@ -2,8 +2,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
 
-from EventManager.models import Evento, Registrazione, Iscrizione
-
+from EventManager.models import Evento
 
 class SignupForm(UserCreationForm):
 
@@ -16,8 +15,3 @@ class EventoForm(forms.ModelForm):
     class Meta:
         model = Evento
         fields = '__all__'
-
-# class IscrizioneForm(forms.ModelForm):
-#     class Meta:
-#         model = Iscrizione
-#         fields = ['nome', 'cognome', 'email']

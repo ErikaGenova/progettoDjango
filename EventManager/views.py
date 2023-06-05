@@ -1,5 +1,5 @@
 from django.contrib.auth import logout
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, CreateView
@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
-class ListaEventiView(ListView):
+class ListaEventiView(ListView): # questa classe mi serve per visualizzare la lista degli eventi (tutti o filtrati per tag)
     model = Evento
     template_name = 'core/eventi.html'
 
@@ -60,6 +60,7 @@ def crea_evento(request):
         form = EventoForm(request.POST, request.FILES)
         if form.is_valid():
             evento = form.save(commit=False)
+            evento.creatore = request.user #associa l'utente corrente come creatore
 
             # Ottieni i tag dal form
             # request.POST.get('tags') restituisce il valore inserito nell'input con nome "tags"; quindi la stringa viene divisa in una lista di tag utilizzando split(','), mentre strip()viene utilizzata per rimuovere eventuali spazi bianchi extra intorno ai tag
@@ -83,20 +84,6 @@ def crea_evento(request):
         form = EventoForm()
 
     return render(request, 'core/crea_evento.html', {'form': form})
-
-
-# def iscrizione_evento(request, titolo_evento):
-#     evento = get_object_or_404(Evento, titolo=titolo_evento)
-#     if request.method == 'POST':
-#         form = EventoForm(request.POST)
-#         if form.is_valid():
-#             iscrizione = form.save(commit=False)
-#             iscrizione.evento = evento
-#             iscrizione.save()
-#             return redirect('evento_iscritto')
-#     else:
-#         form = IscrizioneForm()
-#     return render(request, 'core/iscrizione_evento.html', {'form': form})
 
 
 def acquista_biglietto(request, evento_titolo):
@@ -158,4 +145,35 @@ def profilo(request):
 
 def pagamento_effettuato(request, evento_titolo):
     return render(request, 'core/pagamento_effettuato.html', {'evento_titolo': evento_titolo})
+
+def visualizza_evento(request, evento_titolo):
+    evento = Evento.objects.get(titolo=evento_titolo)
+    context = {
+        'evento': evento
+    }
+    return render(request, 'core/visualizza_evento.html', context)
+
+@login_required
+def modifica_evento(request, evento_titolo):
+    evento = get_object_or_404(Evento, pk=evento_titolo)
+
+    #verifica se l'utente corrente è il creatore dell'evento
+    if request.user != evento.creatore:
+        return HttpResponseForbidden("Non sei autorizzato a modificare questo evento")
+    #TODO: possibilità di modificare l'evento
+
+
+@login_required
+def visualizza_iscritti(request, evento_titolo):
+    evento = get_object_or_404(Evento, pk=evento_titolo)
+
+    #verifica se l'utente corrente è il creatore dell'evento
+    if request.user != evento.creatore:
+        return HttpResponseForbidden("Non sei autorizzato a visualizzare gli iscritti a questo evento")
+
+    context = {
+        'evento': evento,
+        'iscritti': evento.iscritti.all()
+    }
+    return render(request, 'core/visualizza_iscritti.html', context)
 

@@ -17,6 +17,8 @@ class Evento(models.Model):
 
     iscritti = models.ManyToManyField(User, through='Iscrizione', related_name='eventi_iscritti') #ogni istanza del modello Evento ha un campo 'iscritti' che rappresenta gli utenti iscritti a quell'evento
 
+    creatore = models.ForeignKey(User, on_delete=models.CASCADE, null=True) #è per identificare chi crea l'evento, in modo da poterlo modificare e visualizzare gli iscritti
+
     def __str__(self):
         return self.titolo
 
@@ -33,16 +35,6 @@ class Tag(models.Model):
     class Meta:
         verbose_name_plural = "Tag"
 
-
-class Registrazione(models.Model):
-    id = models.AutoField(primary_key=True)
-    utente = models.ForeignKey(User, on_delete=models.CASCADE)
-    evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
-    data_registrazione = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = (("utente", "evento"),)
-        verbose_name_plural = "Registrazioni"
 
 class Biglietto(models.Model):
     id = models.AutoField(primary_key=True)

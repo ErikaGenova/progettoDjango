@@ -1,0 +1,18 @@
+{% extends 'core/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="px-4 m-4">
+        <h1>Lista degli iscritti all'evento "{{ evento.titolo }}"</h1>
+        {% for iscritto in iscritti %}
+            <ul>
+                <li>{{ iscritto.first_name }} {{ iscritto.last_name }}</li>
+            </ul>
+        {% endfor %}
+
+        <a href="{% url 'visualizza_evento' evento.titolo %}" class="btn btn-primary my-2">Torna all'evento</a>
+
+
+    </div>
+
+{% endblock %}

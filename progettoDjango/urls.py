@@ -28,17 +28,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('eventi/', ListaEventiView.as_view(), name='eventi'),
 
-    # path('eventi/', views.home_view_eventi, name='eventi'), # questo url chiama la funzione lista_eventi in views.py per far vedere la lista degli eventi
-
     path('event/<int:id>/', ListaEventiView.as_view(), name='event'),
     path('eventi/nuovo', CreaEventoView.as_view(), name='eventi_create'),
     path('signup/', signup, name='signup'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('crea_evento/', views.crea_evento, name='crea_evento'),
-
-    # path('eventi/<str:titolo_evento>/iscriviti/', iscrizione_evento, name='iscrizione_evento'),
-
-    # path('eventi/<str:evento_titolo>/acquista/', views.acquista_biglietto, name='acquista_biglietto'), # questo url mi serve per acquistare il biglietto
 
     path('evento/<str:evento_titolo>/registrazione/', views.registrazione, name='registrazione'), # questo url mi serve per registrare un utente ad un evento
 
@@ -47,5 +41,10 @@ urlpatterns = [
     path('evento/<str:evento_titolo>/pagamento/', views.acquista_biglietto, name='pagamento'), # questo url mi serve per pagare il biglietto
 
     path('pagamento_effettuato/<str:evento_titolo>/', views.pagamento_effettuato, name='pagamento_effettuato'),
+
+    path('evento/<str:evento_titolo>/', views.visualizza_evento, name='visualizza_evento'),
+
+    path('evento/<str:evento_titolo>/modifica/', views.modifica_evento, name='modifica_evento'),
+    path('evento/<str:evento_titolo>/iscritti/', views.visualizza_iscritti, name='visualizza_iscritti'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
