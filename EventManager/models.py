@@ -10,7 +10,7 @@ class Evento(models.Model):
 
     tag = models.ManyToManyField('Tag', related_name='eventi')
 
-    num_partecipanti = models.IntegerField()
+    num_max_partecipanti = models.IntegerField()
     posti_disponibili = models.IntegerField()
     orario = models.TimeField()  # orario di inizio
     image = models.ImageField(upload_to='media/images/', blank=True, null=True)
@@ -18,6 +18,8 @@ class Evento(models.Model):
     iscritti = models.ManyToManyField(User, through='Iscrizione', related_name='eventi_iscritti') #ogni istanza del modello Evento ha un campo 'iscritti' che rappresenta gli utenti iscritti a quell'evento
 
     creatore = models.ForeignKey(User, on_delete=models.CASCADE, null=True) #è per identificare chi crea l'evento, in modo da poterlo modificare e visualizzare gli iscritti
+
+    programma = models.TextField()  # campo programma
 
     def __str__(self):
         return self.titolo
@@ -36,18 +38,18 @@ class Tag(models.Model):
         verbose_name_plural = "Tag"
 
 
-class Biglietto(models.Model):
-    id = models.AutoField(primary_key=True)
-    utente = models.ForeignKey(User, on_delete=models.CASCADE)
-    evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
-    pagamento = models.CharField(max_length=100)
-    costo = models.FloatField()
-
-    def __str__(self):
-        return self.utente.email + " " + self.evento
-
-    class Meta:
-        verbose_name_plural = "Biglietti"
+# class Biglietto(models.Model):
+#     id = models.AutoField(primary_key=True)
+#     utente = models.ForeignKey(User, on_delete=models.CASCADE)
+#     evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
+#     pagamento = models.CharField(max_length=100)
+#     costo = models.FloatField()
+#
+#     def __str__(self):
+#         return self.utente.email + " " + self.evento
+#
+#     class Meta:
+#         verbose_name_plural = "Biglietti"
 
 class Iscrizione(models.Model):
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE)

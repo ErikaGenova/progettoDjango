@@ -3,13 +3,13 @@
 
 {% block content %}
     <div>
-        <div class="px-2">
+        <div class="px-2 m-4">
             <h1>Home</h1>
             <p>In questa pagina potrai vedere gli eventi più importanti dei prossimi giorni! Iscriviti al sito per poter creare il tuo evento.</p>
             <p>Se sei già registrato, fai il log in per creare un nuovo evento oppure per comprare un biglietto per il tuo evento preferito!</p>
         </div>
 
-        <div class="row">
+        <div class="row m-4">
             {% for evento in eventi %}
                 <div class="col-md-3">
                     <a class="link-dark link-underline-opacity-0" href="{% url 'visualizza_evento' evento.titolo %}">
@@ -24,10 +24,23 @@
                                 Affrettati, sono disponibili solo {{ evento.posti_disponibili }} biglietti! <br>
 
                                 {# se l'evento è gratuito devo solo iscrivermi, altrimenti devo prima comprare il biglietto #}
-                                {% if evento.costo_biglietto == 0 %}
-                                    <a href="{% url 'registrazione' evento.titolo %}" class="btn btn-primary my-2">Iscriviti all'evento!</a>
+                                {% if request.user.is_authenticated %}
+                                    {% if request.user in evento.iscritti.all and evento.costo_biglietto == 0 %}
+                                        <p>Sei già iscritto all'evento.</p>
+                                        <a href="{% url 'disiscrizione' evento.titolo %}" class="btn btn-primary my-2">Disiscriviti</a>
+                                    {% elif request.user in evento.iscritti.all %}
+                                        <p>Hai già acquistato il biglietto per questo evento.</p>
+                                        <a href="{% url 'rimborso' evento.titolo %}" class="btn btn-primary my-2">Richiedi il rimborso</a>
+
+                                    {% else %}
+                                        {% if evento.costo_biglietto == 0 %}
+                                            <a href="{% url 'registrazione' evento.titolo %}" class="btn btn-primary my-2">Iscriviti all'evento!</a>
+                                        {% else %}
+                                            <a href="{% url 'pagamento' evento.titolo %}" class="btn btn-primary my-2">Acquista il biglietto!</a>
+                                        {% endif %}
+                                    {% endif %}
                                 {% else %}
-                                    <a href="{% url 'pagamento' evento.titolo %}" class="btn btn-primary my-2">Acquista il biglietto!</a>
+                                    <p>Effettua il login per iscriverti all'evento o acquistare il biglietto.</p>
                                 {% endif %}
 
                             </div>

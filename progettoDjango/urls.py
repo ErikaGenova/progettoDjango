@@ -21,7 +21,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from EventManager.views import ListaEventiView, signup, CreaEventoView
-    #iscrizione_evento
 
 urlpatterns = [
     path('', views.home_view_eventi, name='index'),
@@ -46,5 +45,8 @@ urlpatterns = [
 
     path('evento/<str:evento_titolo>/modifica/', views.modifica_evento, name='modifica_evento'),
     path('evento/<str:evento_titolo>/iscritti/', views.visualizza_iscritti, name='visualizza_iscritti'),
+
+    path('evento/<str:evento_titolo>/disiscriviti/', views.disiscrizione, name='disiscrizione'),
+    path('evento/<str:evento_titolo>/rimborso/', views.rimborso, name='rimborso'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

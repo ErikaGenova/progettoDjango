@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
@@ -12,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
-class ListaEventiView(ListView): # questa classe mi serve per visualizzare la lista degli eventi (tutti o filtrati per tag)
+class ListaEventiView(ListView):  # questa classe mi serve per visualizzare la lista degli eventi (tutti o filtrati per tag)
     model = Evento
     template_name = 'core/eventi.html'
 
@@ -60,7 +61,7 @@ def crea_evento(request):
         form = EventoForm(request.POST, request.FILES)
         if form.is_valid():
             evento = form.save(commit=False)
-            evento.creatore = request.user #associa l'utente corrente come creatore
+            evento.creatore = request.user  # associa l'utente corrente come creatore
 
             # Ottieni i tag dal form
             # request.POST.get('tags') restituisce il valore inserito nell'input con nome "tags"; quindi la stringa viene divisa in una lista di tag utilizzando split(','), mentre strip()viene utilizzata per rimuovere eventuali spazi bianchi extra intorno ai tag
@@ -89,16 +90,33 @@ def crea_evento(request):
 def acquista_biglietto(request, evento_titolo):
     evento = Evento.objects.get(titolo=evento_titolo)
 
-    if request.method == 'POST':
-        #pagamento
+    # if request.method == 'POST':
+    # #pagamento
+    #
+    # #aggiunge l'utente all'elenco degli iscritti
+    # evento.iscritti.add(request.user)
+    #
+    # #aggiunge l'evento all'elenco degli eventi acquistati dall'utente
+    # request.user.eventi_iscritti.add(evento)
 
-        #aggiunge l'utente all'elenco degli iscritti
+    if request.method == 'POST':
+        if evento.iscritti.filter(pk=request.user.pk).exists():
+            # messages.warning(request, "Sei già iscritto a questo evento.")
+            return redirect('eventi', evento_titolo)
+
+        if request.user.eventi_iscritti.filter(pk=evento.pk).exists():
+            # messages.warning(request, "Hai già acquistato un biglietto per questo evento.")
+            return redirect('eventi', evento_titolo)
+
+        # Esegui il pagamento
+
+        # Aggiungi l'utente all'elenco degli iscritti
         evento.iscritti.add(request.user)
 
-        #aggiunge l'evento all'elenco degli eventi acquistati dall'utente
+        # Aggiungi l'evento all'elenco degli eventi acquistati dall'utente
         request.user.eventi_iscritti.add(evento)
 
-        #rimuove un posto disponibile
+        # rimuove un posto disponibile
         evento.posti_disponibili -= 1
         evento.save()
 
@@ -108,12 +126,12 @@ def acquista_biglietto(request, evento_titolo):
         return render(request, 'core/pagamento.html', {'evento': evento})
 
 
-def dettaglio_evento(request, evento_titolo):
-    evento = get_object_or_404(Evento, nome=evento_titolo)
-    context = {
-        'evento': evento
-    }
-    return render(request, 'dettaglio_evento.html', context)
+# def dettaglio_evento(request, evento_titolo):
+#     evento = get_object_or_404(Evento, nome=evento_titolo)
+#     context = {
+#         'evento': evento
+#     }
+#     return render(request, 'dettaglio_evento.html', context)
 
 
 @login_required
@@ -121,20 +139,36 @@ def registrazione(request, evento_titolo):
     evento = get_object_or_404(Evento, titolo=evento_titolo)
     context = {'evento': evento}
 
+    # if evento.posti_disponibili > 0:
+    #     # Rimuovi un posto disponibile
+    #     # evento.posti_disponibili -= 1
+    #     # evento.save()
+    #     # evento.iscritti.add(request.user)
+    #
+    if evento.iscritti.filter(pk=request.user.pk).exists():
+        # messages.warning(request, "Sei già iscritto a questo evento.")
+        return redirect('eventi', evento_titolo)
+
+    if request.user.eventi_iscritti.filter(pk=evento.pk).exists():
+        # messages.warning(request, "Hai già acquistato un biglietto per questo evento.")
+        return redirect('eventi', evento_titolo)
+
     if evento.posti_disponibili > 0:
         # Rimuovi un posto disponibile
         evento.posti_disponibili -= 1
         evento.save()
         evento.iscritti.add(request.user)
+
     else:
         return render(request, 'core/registrazione_fallita.html', context)
 
     return render(request, 'core/registrazione_completata.html', context)
 
+
 @login_required
 def profilo(request):
-    utente = request.user #stiamo ottenendo l'utente corrente
-    eventi_iscritti = utente.eventi_iscritti.all() #stiamo ottenendo tutti gli eventi a cui l'utente è iscritto
+    utente = request.user  # stiamo ottenendo l'utente corrente
+    eventi_iscritti = utente.eventi_iscritti.all()  # stiamo ottenendo tutti gli eventi a cui l'utente è iscritto
 
     context = {
         'utente': utente,
@@ -146,6 +180,7 @@ def profilo(request):
 def pagamento_effettuato(request, evento_titolo):
     return render(request, 'core/pagamento_effettuato.html', {'evento_titolo': evento_titolo})
 
+
 def visualizza_evento(request, evento_titolo):
     evento = Evento.objects.get(titolo=evento_titolo)
     context = {
@@ -153,11 +188,12 @@ def visualizza_evento(request, evento_titolo):
     }
     return render(request, 'core/visualizza_evento.html', context)
 
+
 @login_required
 def modifica_evento(request, evento_titolo):
     evento = get_object_or_404(Evento, pk=evento_titolo)
 
-    #verifica se l'utente corrente è il creatore dell'evento
+    # verifica se l'utente corrente è il creatore dell'evento
     if request.user != evento.creatore:
         return HttpResponseForbidden("Non sei autorizzato a modificare questo evento")
 
@@ -173,12 +209,11 @@ def modifica_evento(request, evento_titolo):
     return render(request, 'core/modifica_evento.html', context)
 
 
-
 @login_required
 def visualizza_iscritti(request, evento_titolo):
     evento = get_object_or_404(Evento, pk=evento_titolo)
 
-    #verifica se l'utente corrente è il creatore dell'evento
+    # verifica se l'utente corrente è il creatore dell'evento
     if request.user != evento.creatore:
         return HttpResponseForbidden("Non sei autorizzato a visualizzare gli iscritti a questo evento")
 
@@ -188,3 +223,20 @@ def visualizza_iscritti(request, evento_titolo):
     }
     return render(request, 'core/visualizza_iscritti.html', context)
 
+
+def disiscrizione(request, evento_titolo):
+    evento = get_object_or_404(Evento, pk=evento_titolo)
+    evento.iscritti.remove(request.user)
+    if evento.posti_disponibili < evento.num_max_partecipanti:
+        evento.posti_disponibili += 1
+        evento.save()
+    return render(request, 'core/disiscrizione.html', {'evento': evento})
+
+
+def rimborso(request, evento_titolo):
+    evento = get_object_or_404(Evento, pk=evento_titolo)
+    evento.iscritti.remove(request.user)
+    if evento.posti_disponibili < evento.num_max_partecipanti:
+        evento.posti_disponibili += 1
+        evento.save()
+    return render(request, 'core/rimborso.html', {'evento': evento})

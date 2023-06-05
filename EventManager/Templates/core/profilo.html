@@ -2,29 +2,35 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-    <h1>Il mio profilo</h1>
-    <h2 class="text-center">Ciao {{ utente.username }} 😉</h2>
+    <div class="m-3 p-2">
+        <h1>Il mio profilo</h1>
+        <h2 class="text-center">Ciao {{ utente.username }} 😉</h2>
 
-    <h3 class="m-3">I miei eventi:</h3>
-    {% for evento in eventi_iscritti %}
-        <ul class="list-unstyled">
-            <li>
-                <div class="col-md-3">
-                    <div class="card" style="width: 18rem;">
-                        <img src="{{ MEDIA_URL }}{{ evento.image.url }}" class="card-img-top" alt="Evento Image">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ evento.titolo }}</h5>
-                            <p class="card-text">{{ evento.descrizione }} <br>
-                                Costo biglietto: {{ evento.costo_biglietto }} €<br>
-                                Quando: {{ evento.data }}, ore {{ evento.orario }} <br>
-                                Dove: {{ evento.luogo }}</p>
+        <h3>I miei eventi:</h3>
+        {% for evento in eventi_iscritti %}
+            <ul class="list-unstyled">
+                <li>
+                    <div class="col-md-3">
+                        <a class="link-dark link-underline-opacity-0" href="{% url 'visualizza_evento' evento.titolo %}">
 
-                        </div>
+                            <div class="card" style="width: 18rem;">
+                                <img src="{{ MEDIA_URL }}{{ evento.image.url }}" class="card-img-top" alt="Evento Image">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ evento.titolo }}</h5>
+                                    <p class="card-text">{{ evento.descrizione }} <br>
+                                        Costo biglietto: {{ evento.costo_biglietto }} €<br>
+                                        Quando: {{ evento.data }}, ore {{ evento.orario }} <br>
+                                        Dove: {{ evento.luogo }}</p>
+
+                                </div>
+                            </div>
+                        </a>
                     </div>
-                </div>
-            </li>
-        </ul>
-    {% empty %}
-        <p>Non sei iscritto a nessun evento al momento.</p>
-    {% endfor %}
+                </li>
+            </ul>
+        {% empty %}
+            <p>Non sei iscritto a nessun evento al momento.</p>
+        {% endfor %}
+
+    </div>
 {% endblock %}

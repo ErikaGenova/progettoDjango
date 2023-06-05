@@ -7,5 +7,5 @@ from .models import *
 
 admin.site.register(Evento)
 admin.site.register(Tag)
-admin.site.register(Biglietto)
+# admin.site.register(Biglietto)
 admin.site.register(Iscrizione)

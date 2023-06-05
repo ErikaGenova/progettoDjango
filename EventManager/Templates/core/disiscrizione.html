@@ -1,0 +1,8 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <h1>Ti sei disiscritto dall'evento " {{ evento.titolo }}"</h1>
+    <p>La disiscrizione è avvenuta con successo. </p>
+    <a href="{% url 'index' %}" class="btn btn-primary my-2">Torna in Homepage</a>
+
+{% endblock %}
