@@ -14,4 +14,4 @@ class SignupForm(UserCreationForm):
 class EventoForm(forms.ModelForm):
     class Meta:
         model = Evento
-        fields = '__all__'
+        fields = ['titolo', 'data', 'luogo', 'descrizione', 'costo_biglietto', 'num_max_partecipanti', 'posti_disponibili', 'orario', 'programma', 'image', 'tag']

@@ -14,7 +14,7 @@
 
 
 <div>
-    <nav class="navbar bg-body-tertiary" style="background-color: palegreen">
+    <nav class="navbar bg-body-tertiary" style="background-color: #90EE90">
         <div class="container-fluid">
             <a href="{% url 'index' %}" class="navbar-brand">Homepage</a>
 
@@ -39,9 +39,9 @@
                 <a href="{% url 'crea_evento' %}">
                     <button class="btn btn-primary">Crea nuovo evento</button>
                 </a>
-                
+
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                         Hi, {{ user.username }}!
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">

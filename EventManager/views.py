@@ -64,7 +64,8 @@ def crea_evento(request):
             evento.creatore = request.user  # associa l'utente corrente come creatore
 
             # Ottieni i tag dal form
-            # request.POST.get('tags') restituisce il valore inserito nell'input con nome "tags"; quindi la stringa viene divisa in una lista di tag utilizzando split(','), mentre strip()viene utilizzata per rimuovere eventuali spazi bianchi extra intorno ai tag
+            # request.POST.get('tags') restituisce il valore inserito nell'input con nome "tags"; quindi la stringa viene divisa in una
+            # lista di tag utilizzando split(','),mentre strip()viene utilizzata per rimuovere eventuali spazi bianchi extra intorno ai tag
             tags_input = request.POST.get('tags')
             tag_list = [tag.strip() for tag in tags_input.split(',')]
 
@@ -89,15 +90,6 @@ def crea_evento(request):
 
 def acquista_biglietto(request, evento_titolo):
     evento = Evento.objects.get(titolo=evento_titolo)
-
-    # if request.method == 'POST':
-    # #pagamento
-    #
-    # #aggiunge l'utente all'elenco degli iscritti
-    # evento.iscritti.add(request.user)
-    #
-    # #aggiunge l'evento all'elenco degli eventi acquistati dall'utente
-    # request.user.eventi_iscritti.add(evento)
 
     if request.method == 'POST':
         if evento.iscritti.filter(pk=request.user.pk).exists():
@@ -124,14 +116,6 @@ def acquista_biglietto(request, evento_titolo):
 
     else:
         return render(request, 'core/pagamento.html', {'evento': evento})
-
-
-# def dettaglio_evento(request, evento_titolo):
-#     evento = get_object_or_404(Evento, nome=evento_titolo)
-#     context = {
-#         'evento': evento
-#     }
-#     return render(request, 'dettaglio_evento.html', context)
 
 
 @login_required
@@ -199,9 +183,20 @@ def modifica_evento(request, evento_titolo):
 
     if request.method == 'POST':
         form = EventoForm(request.POST, request.FILES, instance=evento)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('visualizza_evento', args=[evento_titolo]))
+
+        # Gestione dei tag
+        tags_input = request.POST.get('tags')
+        tag_list = [tag.strip() for tag in tags_input.split(',')]
+
+        # Rimuovi i tag esistenti dall'evento
+        # evento.tag.clear()
+
+        # Aggiungi i nuovi tag all'evento
+        for tag_name in tag_list:
+            tag, _ = Tag.objects.get_or_create(nome=tag_name)
+            evento.tag.add(tag)
+
+        return HttpResponseRedirect(reverse('visualizza_evento', args=[evento_titolo]))
     else:
         form = EventoForm(instance=evento)
 
@@ -240,3 +235,12 @@ def rimborso(request, evento_titolo):
         evento.posti_disponibili += 1
         evento.save()
     return render(request, 'core/rimborso.html', {'evento': evento})
+
+
+def elimina_evento(request, evento_titolo):
+    evento = get_object_or_404(Evento, pk=evento_titolo)
+    # verifica se l'utente corrente è il creatore dell'evento
+    if request.user != evento.creatore:
+        return HttpResponseForbidden("Non sei autorizzato a eliminare questo evento")
+    evento.delete()
+    return render(request, 'core/elimina_evento.html', {'evento': evento})

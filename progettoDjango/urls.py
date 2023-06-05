@@ -49,4 +49,6 @@ urlpatterns = [
     path('evento/<str:evento_titolo>/disiscriviti/', views.disiscrizione, name='disiscrizione'),
     path('evento/<str:evento_titolo>/rimborso/', views.rimborso, name='rimborso'),
 
+    path('evento/<str:evento_titolo>/elimina/', views.elimina_evento, name='elimina_evento'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

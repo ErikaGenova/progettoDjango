@@ -38,19 +38,6 @@ class Tag(models.Model):
         verbose_name_plural = "Tag"
 
 
-# class Biglietto(models.Model):
-#     id = models.AutoField(primary_key=True)
-#     utente = models.ForeignKey(User, on_delete=models.CASCADE)
-#     evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
-#     pagamento = models.CharField(max_length=100)
-#     costo = models.FloatField()
-#
-#     def __str__(self):
-#         return self.utente.email + " " + self.evento
-#
-#     class Meta:
-#         verbose_name_plural = "Biglietti"
-
 class Iscrizione(models.Model):
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
