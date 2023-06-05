@@ -38,9 +38,14 @@ urlpatterns = [
 
     # path('eventi/<str:titolo_evento>/iscriviti/', iscrizione_evento, name='iscrizione_evento'),
 
-    path('eventi/<str:evento_titolo>/acquista/', views.acquista_biglietto, name='acquista_biglietto'), # questo url mi serve per acquistare il biglietto
+    # path('eventi/<str:evento_titolo>/acquista/', views.acquista_biglietto, name='acquista_biglietto'), # questo url mi serve per acquistare il biglietto
+
     path('evento/<str:evento_titolo>/registrazione/', views.registrazione, name='registrazione'), # questo url mi serve per registrare un utente ad un evento
 
     path('profilo/', views.profilo, name='profilo'), # questo url mi serve per vedere il profilo dell'utente
+
+    path('evento/<str:evento_titolo>/pagamento/', views.acquista_biglietto, name='pagamento'), # questo url mi serve per pagare il biglietto
+
+    path('pagamento_effettuato/<str:evento_titolo>/', views.pagamento_effettuato, name='pagamento_effettuato'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

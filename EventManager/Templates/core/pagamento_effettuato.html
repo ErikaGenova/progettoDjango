@@ -1,0 +1,8 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <h1>Pagamento completato</h1>
+    <p>Il pagamento per l'evento "{{ evento_titolo }}" è stato effettuato con successo!</p>
+    <a href="{% url 'index' %}" class="btn btn-primary my-2">Torna in Homepage</a>
+
+{% endblock %}

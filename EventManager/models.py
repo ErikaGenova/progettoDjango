@@ -42,6 +42,7 @@ class Registrazione(models.Model):
 
     class Meta:
         unique_together = (("utente", "evento"),)
+        verbose_name_plural = "Registrazioni"
 
 class Biglietto(models.Model):
     id = models.AutoField(primary_key=True)
@@ -57,14 +58,14 @@ class Biglietto(models.Model):
         verbose_name_plural = "Biglietti"
 
 class Iscrizione(models.Model):
-    nome = models.CharField(max_length=100)
-    cognome = models.CharField(max_length=100)
-    email = models.EmailField()
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
 
     class Meta:
         unique_together = (("user", "evento"),)
+        verbose_name_plural = "Iscrizioni"
 
     def __str__(self):
-        return f'{self.nome} {self.cognome}'
+        return f'{self.user.first_name} {self.user.last_name} -> {self.evento.titolo}'
+
+

@@ -21,7 +21,7 @@
                         {% if evento.costo_biglietto == 0 %}
                             <a href="{% url 'registrazione' evento.titolo %}" class="btn btn-primary my-2">Iscriviti all'evento!</a>
                         {% else %}
-                            <a href="{% url 'acquista_biglietto' evento.titolo %}" class="btn btn-primary my-2">Acquista il biglietto!</a>
+                            <a href="{% url 'pagamento' evento.titolo %}" class="btn btn-primary my-2">Acquista il biglietto!</a>
                         {% endif %}
 
 

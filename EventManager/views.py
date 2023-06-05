@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, CreateView
 from EventManager.models import Evento, Tag
-from .forms import SignupForm, IscrizioneForm
+from .forms import SignupForm
 from .forms import EventoForm
 from django.contrib.auth.decorators import login_required
 
@@ -100,18 +100,25 @@ def crea_evento(request):
 
 
 def acquista_biglietto(request, evento_titolo):
-    evento = get_object_or_404(Evento, pk=evento_titolo)
+    evento = Evento.objects.get(titolo=evento_titolo)
 
-    if evento.posti_disponibili > 0:
-        # Rimuovi un posto disponibile
+    if request.method == 'POST':
+        #pagamento
+
+        #aggiunge l'utente all'elenco degli iscritti
+        evento.iscritti.add(request.user)
+
+        #aggiunge l'evento all'elenco degli eventi acquistati dall'utente
+        request.user.eventi_iscritti.add(evento)
+
+        #rimuove un posto disponibile
         evento.posti_disponibili -= 1
         evento.save()
 
-        # Altri codici di gestione dell'acquisto del biglietto
+        return redirect('pagamento_effettuato', evento.titolo)
 
-        return render(request, 'acquisto_completato.html')
     else:
-        return render(request, 'acquisto_fallito.html')
+        return render(request, 'core/pagamento.html', {'evento': evento})
 
 
 def dettaglio_evento(request, evento_titolo):
@@ -147,3 +154,8 @@ def profilo(request):
         'eventi_iscritti': eventi_iscritti
     }
     return render(request, 'core/profilo.html', context)
+
+
+def pagamento_effettuato(request, evento_titolo):
+    return render(request, 'core/pagamento_effettuato.html', {'evento_titolo': evento_titolo})
+

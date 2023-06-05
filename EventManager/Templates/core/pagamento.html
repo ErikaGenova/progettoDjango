@@ -1,0 +1,18 @@
+<!-- pagamento.html -->
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <h1>Effettua il pagamento</h1>
+    <p>Evento: {{ evento.titolo }}</p>
+
+    <form method="POST" action="{% url 'pagamento' evento.titolo %}">
+        {% csrf_token %}
+        <!-- Aggiungi i campi del form di pagamento fittizio -->
+        <input type="text" name="numero_carta" placeholder="Numero carta" required>
+        <input type="text" name="scadenza" placeholder="Scadenza" required>
+        <input type="text" name="cvv" placeholder="CVV" required>
+
+        <button type="submit" class="btn btn-primary my-2">Paga</button> <!-- Ricorda che il bottone deve essere di tipo SUBMIT!!  -->
+
+    </form>
+{% endblock %}

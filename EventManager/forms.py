@@ -17,7 +17,7 @@ class EventoForm(forms.ModelForm):
         model = Evento
         fields = '__all__'
 
-class IscrizioneForm(forms.ModelForm):
-    class Meta:
-        model = Iscrizione
-        fields = ['nome', 'cognome', 'email']
+# class IscrizioneForm(forms.ModelForm):
+#     class Meta:
+#         model = Iscrizione
+#         fields = ['nome', 'cognome', 'email']
