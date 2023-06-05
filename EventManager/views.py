@@ -160,7 +160,18 @@ def modifica_evento(request, evento_titolo):
     #verifica se l'utente corrente è il creatore dell'evento
     if request.user != evento.creatore:
         return HttpResponseForbidden("Non sei autorizzato a modificare questo evento")
-    #TODO: possibilità di modificare l'evento
+
+    if request.method == 'POST':
+        form = EventoForm(request.POST, request.FILES, instance=evento)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('visualizza_evento', args=[evento_titolo]))
+    else:
+        form = EventoForm(instance=evento)
+
+    context = {'evento': evento, 'form': form}
+    return render(request, 'core/modifica_evento.html', context)
+
 
 
 @login_required
