@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import logout
+from django.contrib.auth import logout, login
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -35,8 +35,13 @@ def signup(request):
     elif request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
-            form.save()  # salva l'utente nel db
-            return HttpResponseRedirect(reverse('index'))
+            user = form.save()  # salva l'utente nel db
+
+            # autentica l'utente
+            login(request, user)
+
+            return redirect('profilo')
+
         else:
             return render(request, 'core/signup.html', {'form': form})
 
@@ -123,12 +128,6 @@ def registrazione(request, evento_titolo):
     evento = get_object_or_404(Evento, titolo=evento_titolo)
     context = {'evento': evento}
 
-    # if evento.posti_disponibili > 0:
-    #     # Rimuovi un posto disponibile
-    #     # evento.posti_disponibili -= 1
-    #     # evento.save()
-    #     # evento.iscritti.add(request.user)
-    #
     if evento.iscritti.filter(pk=request.user.pk).exists():
         # messages.warning(request, "Sei già iscritto a questo evento.")
         return redirect('eventi', evento_titolo)
@@ -188,9 +187,6 @@ def modifica_evento(request, evento_titolo):
         tags_input = request.POST.get('tags')
         tag_list = [tag.strip() for tag in tags_input.split(',')]
 
-        # Rimuovi i tag esistenti dall'evento
-        # evento.tag.clear()
-
         # Aggiungi i nuovi tag all'evento
         for tag_name in tag_list:
             tag, _ = Tag.objects.get_or_create(nome=tag_name)
@@ -239,6 +235,7 @@ def rimborso(request, evento_titolo):
 
 def elimina_evento(request, evento_titolo):
     evento = get_object_or_404(Evento, pk=evento_titolo)
+
     # verifica se l'utente corrente è il creatore dell'evento
     if request.user != evento.creatore:
         return HttpResponseForbidden("Non sei autorizzato a eliminare questo evento")

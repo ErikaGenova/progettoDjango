@@ -37,9 +37,9 @@
                                 <p>Effettua il login per iscriverti all'evento o acquistare il biglietto.</p>
                             {% endif %}
 
-                        {% if request.user == evento.creatore %}
-                            <a href="{% url 'visualizza_evento' evento.titolo %}" class="btn btn-danger my-2">Modifica evento</a>
-                        {% endif %}
+                            {% if request.user == evento.creatore %}
+                                <a href="{% url 'visualizza_evento' evento.titolo %}" class="btn btn-danger my-2">Modifica evento</a>
+                            {% endif %}
 
 
                             <br>
