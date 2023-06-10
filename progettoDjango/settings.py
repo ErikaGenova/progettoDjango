@@ -25,8 +25,11 @@ SECRET_KEY = 'django-insecure-no0(773*0c*e6%8ozjg!m0dn9@hg6sr=hr#o96x=_39&(7p_je
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['progettodjango-production.up.railway.app', 'localhost', '127.0.0.1']
 
+CSRF_TRUSTED_ORIGINS = ['https://progettodjango-production.up.railway.app',]
+
+CORS_ORIGIN_WHITELIST = ['https://progettodjango-production.up.railway.app',]
 
 # Application definition
 
@@ -113,8 +116,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -150,4 +151,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_ROOT = BASE_DIR / 'media' #percorso dove salvare i file caricati
 MEDIA_URL = '/media/' #percorso dove caricare i file
-
