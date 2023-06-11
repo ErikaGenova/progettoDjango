@@ -46,9 +46,9 @@ def signup(request):
             return render(request, 'core/signup.html', {'form': form})
 
 
-class CreaEventoView(CreateView):
-    model = Evento
-    fields = '__all__'
+# class CreaEventoView(CreateView):
+#     model = Evento
+#     fields = '__all__'
 
 
 def home_view_eventi(request):
@@ -65,7 +65,7 @@ def crea_evento(request):
     if request.method == 'POST':
         form = EventoForm(request.POST, request.FILES)
         if form.is_valid():
-            evento = form.save(commit=False)
+            evento = form.save()
             evento.creatore = request.user  # associa l'utente corrente come creatore
 
             # Ottieni i tag dal form
@@ -85,6 +85,8 @@ def crea_evento(request):
             for tag_name in tag_list:
                 tag, _ = Tag.objects.get_or_create(nome=tag_name)
                 evento.tag.add(tag)
+
+            evento.save()
 
             return HttpResponseRedirect(reverse('index'))
         else:
@@ -185,16 +187,23 @@ def modifica_evento(request, evento_titolo):
     if request.method == 'POST':
         form = EventoForm(request.POST, request.FILES, instance=evento)
 
-        # Gestione dei tag
-        tags_input = request.POST.get('tags')
-        tag_list = [tag.strip() for tag in tags_input.split(',')]
+        if form.is_valid():
+            evento = form.save()
 
-        # Aggiungi i nuovi tag all'evento
-        for tag_name in tag_list:
-            tag, _ = Tag.objects.get_or_create(nome=tag_name)
-            evento.tag.add(tag)
+            # Gestione dei tag
+            tags_input = request.POST.get('tags')
+            tag_list = [tag.strip() for tag in tags_input.split(',')]
 
-        return HttpResponseRedirect(reverse('visualizza_evento', args=[evento_titolo]))
+            # Aggiungi i nuovi tag all'evento
+            for tag_name in tag_list:
+                tag, _ = Tag.objects.get_or_create(nome=tag_name)
+                evento.tag.add(tag)
+
+            evento.save()
+
+            return HttpResponseRedirect(reverse('visualizza_evento', args=[evento_titolo]))
+        else:
+            return render(request, 'core/modifica_evento.html', {'form': form})
     else:
         form = EventoForm(instance=evento)
 
@@ -241,5 +250,7 @@ def elimina_evento(request, evento_titolo):
     # verifica se l'utente corrente è il creatore dell'evento
     if request.user != evento.creatore:
         return HttpResponseForbidden("Non sei autorizzato a eliminare questo evento")
+
+    titolo = evento.titolo
     evento.delete()
-    return render(request, 'core/elimina_evento.html', {'evento': evento})
+    return render(request, 'core/elimina_evento.html', {'titolo': titolo})

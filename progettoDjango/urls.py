@@ -20,7 +20,7 @@ from EventManager import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-from EventManager.views import ListaEventiView, signup, CreaEventoView
+from EventManager.views import ListaEventiView, signup #, CreaEventoView
 
 urlpatterns = [
     path('', views.home_view_eventi, name='index'),
@@ -28,7 +28,7 @@ urlpatterns = [
     path('eventi/', ListaEventiView.as_view(), name='eventi'),
 
     path('event/<int:id>/', ListaEventiView.as_view(), name='event'),
-    path('eventi/nuovo', CreaEventoView.as_view(), name='eventi_create'),
+    # path('eventi/nuovo', CreaEventoView.as_view(), name='eventi_create'),
     path('signup/', signup, name='signup'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('crea_evento/', views.crea_evento, name='crea_evento'),
