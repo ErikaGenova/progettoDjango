@@ -87,6 +87,8 @@ def crea_evento(request):
                 evento.tag.add(tag)
 
             return HttpResponseRedirect(reverse('index'))
+        else:
+            return render(request, 'core/crea_evento.html', {'form': form})
     else:
         form = EventoForm()
 

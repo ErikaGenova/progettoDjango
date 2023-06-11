@@ -13,7 +13,7 @@ class Evento(models.Model):
     num_max_partecipanti = models.IntegerField()
     posti_disponibili = models.IntegerField()
     orario = models.TimeField()  # orario di inizio
-    image = models.ImageField(upload_to='media/images/', blank=True, null=True)
+    image = models.ImageField(upload_to='media/images/')
 
     iscritti = models.ManyToManyField(User, through='Iscrizione', related_name='eventi_iscritti') #ogni istanza del modello Evento ha un campo 'iscritti' che rappresenta gli utenti iscritti a quell'evento
 
